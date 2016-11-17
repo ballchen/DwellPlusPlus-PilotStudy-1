@@ -59,13 +59,14 @@ export default class buzz extends Component {
 
   addvt() {
     let {vt} = this.state;
-    vt += 10;
+    vt += 5;
     this.setState({vt});
   }
 
   minusvt() {
     let {vt} = this.state;
-    vt -= 10;
+    if(vt - 5 <= 0) return;
+    vt -= 5;
     this.setState({vt});
   }
 
@@ -77,6 +78,7 @@ export default class buzz extends Component {
 
   minusdt() {
     let {dt} = this.state;
+    if(dt - 10 <= 0) return;
     dt -= 10;
     this.setState({dt});
   }
