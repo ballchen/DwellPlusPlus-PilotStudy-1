@@ -17,7 +17,7 @@ import {
 import TimerMixin from 'react-timer-mixin';
 
 const vTime = 10;
-const dTime = 100 + vTime;
+const dTime = 120;
 let interval = null;
 
 export default class buzz extends Component {
@@ -25,23 +25,28 @@ export default class buzz extends Component {
     super(props);
     this.state = {
       counter: 0,
-      isVibrating: false
+      isVibrating: false,
+      vt: vTime,
+      dt: dTime
     };
     this.startVibration = this.startVibration.bind(this);
     this.stopVibration = this.stopVibration.bind(this);
+    this.addvt = this.addvt.bind(this);
+    this.adddt = this.adddt.bind(this);
+    this.minusvt = this.minusvt.bind(this);
+    this.minusdt = this.minusdt.bind(this);
   }
 
   startVibration() {
-    let {counter, isVibrating} = this.state;
+    let {counter, isVibrating, vt, dt} = this.state;
     counter = 0;
     isVibrating = true;
 
     this.interval = TimerMixin.setInterval(() => {
-      console.log('yoyo')
       counter ++ ;
       this.setState({counter});
-      Vibration.vibrate(vTime);
-    }, dTime)
+      Vibration.vibrate(vt);
+    }, dt+vt)
     this.setState({counter, isVibrating});
   }
 
@@ -52,11 +57,35 @@ export default class buzz extends Component {
     this.setState({isVibrating});
   }
 
+  addvt() {
+    let {vt} = this.state;
+    vt += 10;
+    this.setState({vt});
+  }
+
+  minusvt() {
+    let {vt} = this.state;
+    vt -= 10;
+    this.setState({vt});
+  }
+
+  adddt() {
+    let {dt} = this.state;
+    dt += 10;
+    this.setState({dt});
+  }
+
+  minusdt() {
+    let {dt} = this.state;
+    dt -= 10;
+    this.setState({dt});
+  }
+
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          Welcome to React Native!
+          Taptick Setting: {this.state.vt} + {this.state.dt}
         </Text>
         <Text style={styles.instructions}>
           Tap buttun to Vribrate. 
@@ -69,9 +98,43 @@ export default class buzz extends Component {
           onPressIn={this.startVibration}
           onPressOut={this.stopVibration}>
           <View style={styles.button}>
-            <Text>Vibrate</Text>
+            <Text>Touch Me</Text>
           </View>
         </TouchableHighlight>
+
+        <View style={styles.buttons}>
+          <TouchableHighlight
+            style={styles.wrapper}
+            onPress={this.addvt}>
+            <View style={styles.button}>
+              <Text>vt +</Text>
+            </View>
+          </TouchableHighlight>
+
+          <TouchableHighlight
+            style={styles.wrapper}
+            onPress={this.minusvt}>
+            <View style={styles.button}>
+              <Text>vt -</Text>
+            </View>
+          </TouchableHighlight>
+
+          <TouchableHighlight
+            style={styles.wrapper}
+            onPress={this.adddt}>
+            <View style={styles.button}>
+              <Text>dt +</Text>
+            </View>
+          </TouchableHighlight>
+
+          <TouchableHighlight
+            style={styles.wrapper}
+            onPress={this.minusdt}>
+            <View style={styles.button}>
+              <Text>dt -</Text>
+            </View>
+          </TouchableHighlight>
+        </View>
 
       </View>
     );
@@ -98,8 +161,9 @@ const styles = StyleSheet.create({
   counter: {
     textAlign: 'center',
     color: '#333333',
+    marginTop: 5,
     marginBottom: 5,
-    fontSize: 20
+    fontSize: 25
   },
   wrapper: {
     marginTop: 10,
@@ -108,7 +172,12 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#eeeeee',
-    padding: 10,
+    padding: 15,
+  },
+  buttons: {
+    flex: 0,
+    flexDirection: 'row',
+    
   }
 });
 
