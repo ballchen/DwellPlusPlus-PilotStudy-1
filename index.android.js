@@ -157,11 +157,13 @@ export default class buzz extends Component {
           records,
           quests,
           name: this.state.name,
-          mode: this.state.mode
+          mode: this.state.mode,
+          dt: this.state.dt,
+          vt: this.state.vt
         })
       };
 
-      fetch('http://192.168.11.30:3000/pilot_study/'+this.state.study, option)
+      fetch('http://140.112.107.171:3000/pilot_study/'+this.state.study, option)
       .then((response) => response.json()).then((response) => {
         
         records = [];
