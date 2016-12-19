@@ -19,7 +19,7 @@ import TimerMixin from 'react-timer-mixin';
 import process from 'process';
 
 const vTime = 10;
-const dTime = 120;
+const dTime = 150;
 let interval = null;
 let startTime = 0;
 let stopTime = 0;
@@ -87,7 +87,8 @@ export default class buzz extends Component {
       mode: 'training',
       study: 1,
       vt: vTime,
-      dt: dTime
+      dt: dTime,
+      round: 0
     };
     this.startVibration = this.startVibration.bind(this);
     this.stopVibration = this.stopVibration.bind(this);
@@ -110,16 +111,19 @@ export default class buzz extends Component {
 
     this.interval = TimerMixin.setInterval(() => {
       segStartTime = Date.now();
-      counter ++ ;
-      
-      this.setState({counter: counter});
 
-      if((this.state.study == 2) && counter > segQuestNum) {
-        //no vib
+      if((this.state.study == 1) && counter >= segQuestNum) {
+
       } else {
+        counter ++ ;
         Vibration.vibrate(vt);
       }
 
+      if((this.state.study == 1) && counter == segQuestNum) {
+        //no vib
+        TimerMixin.clearInterval(this.interval)
+      } 
+      
     }, dt+vt)
     
     this.setState({counter, isVibrating});
@@ -136,7 +140,7 @@ export default class buzz extends Component {
 
     record();
 
-    this.setState({viewingResult: true ,isVibrating, time: stopTime - ((segStartTime == 0)? startTime : segStartTime)});
+    this.setState({viewingResult: true ,isVibrating, time: stopTime - ((segStartTime == 0)? startTime : segStartTime), counter: counter});
   }
 
   nextQuest() {
@@ -168,7 +172,7 @@ export default class buzz extends Component {
         
         records = [];
         pivot = 0;
-
+        this.setState({round: response.count})
         return response;
       }).catch((error) => {
         console.log(error)
@@ -338,6 +342,12 @@ export default class buzz extends Component {
     else if(viewingResult) {
       return (
         <View style={styles.container}>
+          <View style={styles.round}>
+            <Text style={styles.roundText}>
+              Round {this.state.round + 1}
+            </Text>
+          </View>
+
           <Text style={styles.welcome}>
             Quest: {this.state.quest}
           </Text>
@@ -358,6 +368,11 @@ export default class buzz extends Component {
     } else {
       return (
         <View style={styles.container}>
+          <View style={styles.round}>
+            <Text style={styles.roundText}>
+              Round {this.state.round + 1}
+            </Text>
+          </View>
           <Text style={styles.welcome}>
             Quest: {this.state.quest}
           </Text>
@@ -382,6 +397,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+  },
+  round: {
+    position: 'absolute',
+    top: 0,
+    left: 5
+  },
+  roundText: {
+    fontSize: 12,
+    textAlign: 'center',
+    margin: 10,
+    color: '#AFAFAF'
   },
   welcome: {
     fontSize: 20,
